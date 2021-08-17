@@ -24,4 +24,4 @@ jobs:
       run: docker build . --file Dockerfile --tag olavorn/docker-dotnet-31-sonarscanner:$(date +%s)
       
     - name: Docker Push
-      run: docker push olavorn/docker-dotnet-31-sonarscanner
+      run: docker push olavorn/docker-dotnet-31-sonarscanner:$(date +%s)

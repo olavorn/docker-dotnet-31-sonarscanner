@@ -1,27 +1,26 @@
 # .Net Core Sonar Scanner on Docker Container
 
-Sonar Scanner MsBuild Dockerfile for .Net Core Projects
+Sonar Scanner Image for .Net Core Projects
 
-[![Docker Pulls](https://img.shields.io/docker/pulls/burakince/docker-dotnet-sonarscanner.svg)](https://hub.docker.com/r/burakince/docker-dotnet-sonarscanner/) [![Docker Automated build](https://img.shields.io/docker/automated/burakince/docker-dotnet-sonarscanner.svg)](https://hub.docker.com/r/burakince/docker-dotnet-sonarscanner/) [![Docker Build Status](https://img.shields.io/docker/build/burakince/docker-dotnet-sonarscanner.svg)](https://hub.docker.com/r/burakince/docker-dotnet-sonarscanner/)
+[![Docker Pulls](https://img.shields.io/docker/pulls/olavorn/docker-dotnet-31-sonarscanner.svg)](https://hub.docker.com/repository/docker/olavorn/docker-dotnet-31-sonarscanner/) [![Docker Automated build](https://img.shields.io/docker/automated/olavorn/docker-dotnet-31-sonarscanner.svg)](https://hub.docker.com/repository/docker/olavorn/docker-dotnet-31-sonarscanner/) 
 
 ## This Image Using
 
 |                | Name          | Version       |
 | -------------- |:-------------:| -------------:|
-| OS             | RedHat        |   Stretch (9) |
+| OS             | RedHat        |          UBI8 |
 | Java           | OpenJDK       |  8 Update 171 |
-| .NET Framework | Mono          |    5.12.0.226 |
-| .NET SDK       | .NET Core SDK | 3.1 (3.1.106) |
-| Sonar Scanner  | CLI           |    3.2.0.1227 |
-| Sonar Scanner  | MS Build      |    4.3.1.1372 |
+| .NET SDK       | .NET Core SDK |           3.1 |
+| Sonar Scanner For DotNet Core | CLI           |    3.2.0.1227 |
+
 
 Please check [Releases Page](https://github.com/burakince/docker-dotnet-sonarscanner/releases) for details.
 
-## Latest Versions
+## Source Image
 
-[Latest RedHat](https://www.debian.org/releases/stable/)
+[Latest RedHat](https://catalog.redhat.com/software/containers/rhel8/dotnet-31/5de595e7d70cc51644a54aef?container-tabs=overview&gti-tabs=registry-tokens)
+
 [Latest OpenJDK](https://hub.docker.com/r/library/openjdk/tags/)
-[Latest Sonar Scanner](https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner+for+MSBuild)
 
 ## Using Example
 
@@ -44,18 +43,16 @@ dotnet sln ConsoleApplication1.sln add ConsoleApplication1.csproj
 
 Take login token from sonarqube server, change working directory to project directory and run this code;
 
+Example using in Gitlab gitlab-ci.yml
 ```
-docker run --name dotnet-scanner -it --rm -v $(pwd):/project \
-  -e PROJECT_KEY=ConsoleApplication1 \
-  -e PROJECT_NAME=ConsoleApplication1 \
-  -e PROJECT_VERSION=1.0 \
-  -e HOST=http://localhost:9000 \
-  -e LOGIN_KEY=CHANGE_THIS_ONE \
-  burakince/docker-dotnet-sonarscanner
-```
+...
 
-Note: If you have sonarqube as docker container, you must inspect sonarqube's bridge network IP address and use it in HOST variable.
-
-```
-docker network inspect bridge
+qa:
+  image: olavorn/docker-dotnet-31-sonarscanner
+  script:
+    - dotnet restore
+    - dotnet sonarscanner begin /k:"$SONAR_PROJECT_KEY" /d:sonar.login="$SONAR_TOKEN" /d:sonar.host.url=http://sonar:9000
+    - dotnet build --no-restore -c Release
+    - dotnet sonarscanner end /d:sonar.login="$SONAR_TOKEN" 
+  
 ```

@@ -1,4 +1,4 @@
-FROM registry.access.redhat.com/ubi8/dotnet-31
+FROM registry.access.redhat.com/ubi8/dotnet-60
 USER root
 LABEL maintainer="Olavo Rocha Neto <olavorn@gmail.com>"
 
